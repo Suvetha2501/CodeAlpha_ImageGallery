@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Stylish Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #fff;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+    }
+
+    .filters {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .filters button {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      background: #444;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: all 0.3s;
+    }
+
+    .filters button:hover {
+      background: #ff9500;
+      transform: scale(1.1);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .gallery img {
+      width: 100%;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.4s ease, filter 0.4s ease;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+    }
+
+    .gallery img:hover {
+      transform: scale(1.08);
+      filter: brightness(0.8) saturate(1.2);
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 1000;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+    }
+
+    .lightbox .controls {
+      margin-top: 20px;
+    }
+
+    .lightbox button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #ff9500;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 25px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .lightbox button:hover {
+      background: #ffa733;
+    }
+
+    @media (max-width: 600px) {
+      .gallery {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>🌟 Stylish Advanced Image Gallery 🌟</header>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button data-filter="all">All</button>
+    <button data-filter="nature">Nature</button>
+    <button data-filter="architecture">Architecture</button>
+    <button data-filter="animals">Animals</button>
+    <button data-filter="travel">Travel</button>
+  </div>
+
+  <!-- Gallery -->
+  <div class="gallery">
+    <!-- Nature -->
+    <img src="https://picsum.photos/id/1015/500/350" data-category="nature" alt="Nature">
+    <img src="https://picsum.photos/id/1045/500/350" data-category="nature" alt="Nature">
+    <img src="https://picsum.photos/id/1062/500/350" data-category="nature" alt="Nature">
+
+    <!-- Animals -->
+    <img src="https://picsum.photos/id/1025/500/350" data-category="animals" alt="Animals">
+    <img src="https://picsum.photos/id/1074/500/350" data-category="animals" alt="Animals">
+    <img src="https://picsum.photos/id/1084/500/350" data-category="animals" alt="Animals">
+
+    <!-- Architecture -->
+    <img src="https://picsum.photos/id/1035/500/350" data-category="architecture" alt="Architecture">
+    <img src="https://picsum.photos/id/1065/500/350" data-category="architecture" alt="Architecture">
+    <img src="https://picsum.photos/id/109/500/350" data-category="architecture" alt="Architecture">
+
+    <!-- Travel -->
+    <img src="https://picsum.photos/id/110/500/350" data-category="travel" alt="Travel">
+    <img src="https://picsum.photos/id/111/500/350" data-category="travel" alt="Travel">
+    <img src="https://picsum.photos/id/112/500/350" data-category="travel" alt="Travel">
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightbox-img" src="" alt="">
+    <div class="controls">
+      <button id="prev">⟨ Prev</button>
+      <button id="next">Next ⟩</button>
+      <button id="close">✖ Close</button>
+    </div>
+  </div>
+
+  <script>
+    const galleryImages = document.querySelectorAll('.gallery img');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const closeBtn = document.getElementById('close');
+    const filterButtons = document.querySelectorAll('.filters button');
+
+    let currentIndex = 0;
+
+    // Open lightbox
+    galleryImages.forEach((img, index) => {
+      img.addEventListener('click', () => {
+        currentIndex = index;
+        showImage();
+        lightbox.style.display = 'flex';
+      });
+    });
+
+    // Show image in lightbox
+    function showImage() {
+      lightboxImg.src = galleryImages[currentIndex].src;
+    }
+
+    // Navigation
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+      showImage();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % galleryImages.length;
+      showImage();
+    });
+
+    closeBtn.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+    });
+
+    // Filters
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        galleryImages.forEach(img => {
+          if (filter === 'all' || img.dataset.category === filter) {
+            img.style.display = 'block';
+          } else {
+            img.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
